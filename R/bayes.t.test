@@ -1,0 +1,34 @@
+################################################################################
+### Function to compare the mean trend from 0 using Bayes
+################################################################################
+
+###Select libraries-------------------------------------------------------------
+library(data.table)
+library(BayesianFirstAid)
+library(MASS)
+
+###Load frame-------------------------------------------------------------------
+frame <- fread("data/TMCF_slope.csv")
+frame <- subset(frame, remove != "yes") #Remove duplicates
+frame <- frame[, c(9:22)]
+
+###Box-cox transformation-------------------------------------------------------
+
+box_cox <- function(data) {
+  
+  min_data <- min(data)
+  result <- boxcox((data-min_data+1)~1, lambda = seq(-5, 5, 0.001))
+  mylambda <- result$x[which.max(result$y)]
+  y2 <- (y^mylambda-1)/mylambda
+  
+  file <- list(lambda = mylambda,
+               min = min_data,
+               pvalue = shapiro.test(y2)$p.value,
+               data = y2)
+  
+  return(file)
+  
+}
+
+#
+

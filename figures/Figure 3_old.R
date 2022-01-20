@@ -3,13 +3,13 @@
 ################################################################################
 
 #Library
-library("ggplot2")
-library("data.table")
-library("viridis")
-library("ggExtra")
-library("ggpubr")
-library("ggpointdensity")
-library("ggpmisc")
+library(ggplot2)
+library(data.table)
+library(viridis)
+library(ggExtra)
+library(ggpubr)
+library(ggpointdensity)
+library(ggpmisc)
 
 ###Load data--------------------------------------------------------------------
 data_slope <- as.data.frame(fread("data/TMCF_slope.csv")) #Trends of change

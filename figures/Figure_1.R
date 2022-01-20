@@ -55,8 +55,9 @@ th <- theme(
   panel.spacing = unit(0,"null"))
 
 #Color selection
-colores <- rev(c("#67001f", "#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#f7f7f7", 
-                 "#d1e5f0", "#92c5de", "#4393c3", "#2166ac", "#053061"))
+colores <- rev(c("#67001f", "#b2182b", "#d6604d", "#f4a582", 
+                 "#fddbc7", "#f7f7f7", "#d1e5f0", "#92c5de", 
+                 "#4393c3", "#2166ac", "#053061"))
 
 #Histogram range scale
 cloud_frame$cloud_trends <- cloud_frame$cloud_trends*100
@@ -77,11 +78,11 @@ TMCF_quantile <- quantile(frame$cloud, 0.5)
 #Histograms - all pixels
 hist_all <- ggplot(cloud_frame, aes(x = cloud_trends)) +
   geom_histogram(aes(fill = ..x.., color = ..x..), bins = 30, colour = "grey75") +
-  scale_y_continuous(limits = c(0, 240000), breaks = c(0, 50000, 100000, 150000, 200000), label= c("0.0", "0.5", "1.0", "1.5", "2.0"), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0, 240000), breaks = c(0, 50000, 100000, 150000, 200000), 
+                     label= c("0.0", "0.5", "1.0", "1.5", "2.0"), expand = c(0, 0)) +
   scale_x_continuous(limits = gradient_hist, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range, oob = scales::squish) +
-  geom_vline(xintercept = global_quantile, linetype= "dotted", colour = "black") +
-  geom_vline(xintercept = TMCF_quantile, linetype= "dashed", colour = "grey20") +
+  geom_vline(xintercept = global_quantile, linetype= "dashed", colour = "grey20") +
   xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
   ylab(expression(paste("Frequency (x10"^5, ")", sep = ""))) +
   theme_classic() + theme(legend.position = "none") + th +
@@ -95,9 +96,9 @@ hist_TMCF <- ggplot(frame, aes(x = cloud)) +
   scale_y_continuous(limits = c(0, 110), expand = c(0, 0), n.breaks = 4) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = global_quantile, linetype= "dotted", colour = "black") +
   geom_vline(xintercept = TMCF_quantile, linetype= "dashed", colour = "grey20") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + ylab("Frequency") +
+  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
     panel.background = element_rect(fill = "transparent"),
@@ -112,10 +113,9 @@ hist_neotropic <- ggplot(neotropic, aes(x = cloud)) +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = global_quantile, linetype= "dotted", colour = "black") +
-  geom_vline(xintercept = TMCF_quantile, linetype= "dashed", colour = "grey20") +
-  geom_vline(xintercept = neotropic_quantile, linetype= "solid", colour = "#228b22") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + ylab("Frequency") +
+  geom_vline(xintercept = neotropic_quantile, linetype= "dashed", colour = "#228b22") +
+  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
     panel.background = element_rect(fill = "transparent"),
@@ -130,10 +130,9 @@ hist_indomalayan <- ggplot(indomalayan, aes(x = cloud)) +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = global_quantile, linetype= "dotted", colour = "black") +
-  geom_vline(xintercept = TMCF_quantile, linetype= "dashed", colour = "grey20") +
-  geom_vline(xintercept = indomalayan_quantile, linetype= "solid", colour = "#e6ab02") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + ylab("Frequency") +
+  geom_vline(xintercept = indomalayan_quantile, linetype= "dashed", colour = "#e6ab02") +
+  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
     panel.background = element_rect(fill = "transparent"),
@@ -148,10 +147,9 @@ hist_paleartic <- ggplot(paleartic, aes(x = cloud)) +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = global_quantile, linetype= "dotted", colour = "black") +
-  geom_vline(xintercept = TMCF_quantile, linetype= "dashed", colour = "grey20") +
-  geom_vline(xintercept = paleartic_quantile, linetype= "solid", colour = "#a65628") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + ylab("Frequency") +
+  geom_vline(xintercept = paleartic_quantile, linetype= "dashed", colour = "#a65628") +
+  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
     panel.background = element_rect(fill = "transparent"),
@@ -166,10 +164,9 @@ hist_australasia <- ggplot(australasia, aes(x = cloud)) +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = global_quantile, linetype= "dotted", colour = "black") +
-  geom_vline(xintercept = TMCF_quantile, linetype= "dashed", colour = "grey20") +
-  geom_vline(xintercept = australasia_quantile, linetype= "solid", colour = "#984ea3") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + ylab("Frequency") +
+  geom_vline(xintercept = australasia_quantile, linetype= "dashed", colour = "#984ea3") +
+  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
     panel.background = element_rect(fill = "transparent"),
@@ -178,13 +175,23 @@ hist_australasia <- ggplot(australasia, aes(x = cloud)) +
 #Main plot
 panel_a <- ggplot() +
   geom_tile(data = cloud_frame, aes(x, y, fill= cloud_trends)) + 
-  scale_fill_gradientn(name = expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = "")), colours = colores, limits = gradient_range, breaks = c(-0.6, 0, 0.6), oob = scales::squish) +
+  scale_fill_gradientn(name = expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = "")), 
+                       colours = colores, limits = gradient_range, 
+                       breaks = c(-0.6, 0, 0.6), oob = scales::squish) +
   geom_sf(data = world_proj, color = "grey60", fill = NA, size = 0.2) +
-  geom_sf(data= frame_proj, aes(shape = realm, colour = realm), size = 1.2, alpha = 0.7) +
-  scale_shape_manual("Realms", values=c(21, 24, 25, 22, 23), breaks = c('Neotropic','Paleartic','Indomalayan', 'Australasia', 'Oceania'))+ #21, 22, 23, 24, 25
-  scale_colour_manual("Realms", values=c('#228b22', "#a65628", '#e6ab02', '#984ea3', "black"), breaks = c('Neotropic','Paleartic','Indomalayan', 'Australasia', 'Oceania'))+
-  th + xlab("") + ylab("") +
-  theme(legend.position= c("top"), legend.direction = "horizontal", legend.background = element_rect(fill = "transparent"), legend.box.background = element_blank()) +
+  geom_sf(data= frame_proj, aes(shape = realm, colour = realm), 
+          size = 1.2, alpha = 0.7) +
+  scale_shape_manual("Realms", values=c(21, 24, 25, 22, 23), 
+                     breaks = c('Neotropic','Paleartic','Indomalayan', 'Australasia', 'Oceania'))+ #21, 22, 23, 24, 25
+  scale_colour_manual("Realms", 
+                      values=c('#228b22', "#a65628", '#e6ab02', '#984ea3', "black"), 
+                      breaks = c('Neotropic','Paleartic','Indomalayan', 'Australasia', 'Oceania'))+
+  th + 
+  xlab("") + 
+  ylab("") +
+  theme(legend.position= c("top"), legend.direction = "horizontal", 
+        legend.background = element_rect(fill = "transparent"), 
+        legend.box.background = element_blank()) +
   guides(colour = guide_legend(title.position = "bottom", ncol = 4, nrow = 4),
          fill = guide_colourbar(barwidth = 15, barheight = 0.7, title.position = "bottom"))
 
