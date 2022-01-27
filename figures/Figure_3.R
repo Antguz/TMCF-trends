@@ -1,5 +1,5 @@
 ################################################################################
-### Function for plotting trends in low clouds and distribution of TMCF
+### Function for plotting results from PLSR model
 ################################################################################
 
 ###Select libraries-------------------------------------------------------------

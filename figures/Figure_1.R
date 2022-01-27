@@ -60,20 +60,17 @@ colores <- rev(c("#67001f", "#b2182b", "#d6604d", "#f4a582",
                  "#4393c3", "#2166ac", "#053061"))
 
 #Histogram range scale
-cloud_frame$cloud_trends <- cloud_frame$cloud_trends*100
-frame$cloud <- frame$cloud*100
+cloud_frame$cloud_trends <- cloud_frame$cloud_trends*10000
+frame$cloud <- frame$cloud*10000
 range(cloud_frame$cloud_trends)
-gradient_range <- c(-0.7, 0.7)
-gradient_hist <- c(-1.0402, 1.0402)
+gradient_range <- c(-70, 70)
+gradient_hist <- c(-104.02, 104.02)
 
 #Limits
-limits_breaks = c(-0.6, 0, 0.6)
-limits_labels = c(-0.6, 0, 0.6)
+limits_breaks = c(-60, 0, 60)
+limits_labels = c(-60, 0, 60)
 
 ###Plot-------------------------------------------------------------------------
-
-global_quantile <- quantile(cloud_frame$cloud_trends, 0.5)
-TMCF_quantile <- quantile(frame$cloud, 0.5)
 
 #Histograms - all pixels
 hist_all <- ggplot(cloud_frame, aes(x = cloud_trends)) +
@@ -82,8 +79,8 @@ hist_all <- ggplot(cloud_frame, aes(x = cloud_trends)) +
                      label= c("0.0", "0.5", "1.0", "1.5", "2.0"), expand = c(0, 0)) +
   scale_x_continuous(limits = gradient_hist, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range, oob = scales::squish) +
-  geom_vline(xintercept = global_quantile, linetype= "dashed", colour = "grey20") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  geom_vline(xintercept = -7.3817, linetype= "longdash", colour = "grey20") +
+  xlab(expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   ylab(expression(paste("Frequency (x10"^5, ")", sep = ""))) +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
@@ -96,8 +93,10 @@ hist_TMCF <- ggplot(frame, aes(x = cloud)) +
   scale_y_continuous(limits = c(0, 110), expand = c(0, 0), n.breaks = 4) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = TMCF_quantile, linetype= "dashed", colour = "grey20") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  geom_vline(xintercept = -6.4957210024897, linetype= "longdash", colour = "grey20") +
+  geom_vline(xintercept = -7.72479721402314, linetype= "dotted", colour = "grey20") +
+  geom_vline(xintercept = -5.34037380591736, linetype= "dotted", colour = "grey20") +
+  xlab(expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
@@ -113,8 +112,10 @@ hist_neotropic <- ggplot(neotropic, aes(x = cloud)) +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = neotropic_quantile, linetype= "dashed", colour = "#228b22") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  geom_vline(xintercept = -11.311825799971, linetype= "longdash", colour = "#228b22") +
+  geom_vline(xintercept = -13.1949585178869, linetype= "dotted", colour = "#228b22") +
+  geom_vline(xintercept = -9.43489352689232, linetype= "dotted", colour = "#228b22") +
+  xlab(expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
@@ -123,15 +124,16 @@ hist_neotropic <- ggplot(neotropic, aes(x = cloud)) +
 
 #Histograms - Indomalayan
 indomalayan <- subset(frame, realm == "Indomalayan")
-indomalayan_quantile <- quantile(indomalayan$cloud, 0.5)
 
 hist_indomalayan <- ggplot(indomalayan, aes(x = cloud)) +
   geom_histogram(aes(fill = ..x.., color = ..x..), bins = 30, colour = "grey75") +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = indomalayan_quantile, linetype= "dashed", colour = "#e6ab02") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  geom_vline(xintercept = -4.91197057139373, linetype= "longdash", colour = "#e6ab02") +
+  geom_vline(xintercept = -7.1013619053169, linetype= "dotted", colour = "#e6ab02") +
+  geom_vline(xintercept = -2.66104093834675, linetype= "dotted", colour = "#e6ab02") +
+  xlab(expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
@@ -140,15 +142,16 @@ hist_indomalayan <- ggplot(indomalayan, aes(x = cloud)) +
 
 #Histograms - Paleartic
 paleartic <- subset(frame, realm == "Paleartic")
-paleartic_quantile <- quantile(paleartic$cloud, 0.5)
 
 hist_paleartic <- ggplot(paleartic, aes(x = cloud)) +
   geom_histogram(aes(fill = ..x.., color = ..x..), bins = 30, colour = "grey75") +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = paleartic_quantile, linetype= "dashed", colour = "#a65628") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  geom_vline(xintercept = -1.49751382692975, linetype= "longdash", colour = "#a65628") +
+  geom_vline(xintercept = -3.29121421788233, linetype= "dotted", colour = "#a65628") +
+  geom_vline(xintercept = 0.335358954745908, linetype= "dotted", colour = "#a65628") +
+  xlab(expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
@@ -157,15 +160,16 @@ hist_paleartic <- ggplot(paleartic, aes(x = cloud)) +
 
 #Histograms - Australasia
 australasia <- subset(frame, realm == "Australasia")
-australasia_quantile <- quantile(australasia$cloud, 0.5)
 
 hist_australasia <- ggplot(australasia, aes(x = cloud)) +
   geom_histogram(aes(fill = ..x.., color = ..x..), bins = 30, colour = "grey75") +
   scale_y_continuous(limits = c(0, 50), expand = c(0, 0), breaks = c(0, 25, 50), labels = c(0, 25, 50)) +   
   scale_x_continuous(limits = gradient_range, expand = c(0, 0), breaks = limits_breaks) +
   scale_fill_gradientn(colours = colores, limits = gradient_range) +
-  geom_vline(xintercept = australasia_quantile, linetype= "dashed", colour = "#984ea3") +
-  xlab(expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  geom_vline(xintercept = 2.56748613729541, linetype= "longdash", colour = "#984ea3") +
+  geom_vline(xintercept = -2.15529932270452, linetype= "dotted", colour = "#984ea3") +
+  geom_vline(xintercept = 7.11938825107728, linetype= "dotted", colour = "#984ea3") +
+  xlab(expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   ylab("Frequency") +
   theme_classic() + theme(legend.position = "none") + th +
   theme(
@@ -177,7 +181,7 @@ panel_a <- ggplot() +
   geom_tile(data = cloud_frame, aes(x, y, fill= cloud_trends)) + 
   scale_fill_gradientn(name = expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = "")), 
                        colours = colores, limits = gradient_range, 
-                       breaks = c(-0.6, 0, 0.6), oob = scales::squish) +
+                       breaks = c(-60, 0, 60), oob = scales::squish) +
   geom_sf(data = world_proj, color = "grey60", fill = NA, size = 0.2) +
   geom_sf(data= frame_proj, aes(shape = realm, colour = realm), 
           size = 1.2, alpha = 0.7) +
@@ -197,7 +201,7 @@ panel_a <- ggplot() +
 
 panel_a <- ggplot() +
   geom_tile(data = cloud_frame, aes(x, y, fill= cloud_trends)) + 
-  scale_fill_gradientn(name = expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = "")), colours = colores, limits = gradient_range, breaks = c(-0.6, 0, 0.6), oob = scales::squish) +
+  scale_fill_gradientn(name = expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = "")), colours = colores, limits = gradient_range, breaks = c(-60, 0, 60), oob = scales::squish) +
   geom_sf(data = world_proj, color = "grey60", fill = NA, size = 0.2) +
   th + xlab("") + ylab("") +
   theme(legend.position= c("top"), legend.direction = "horizontal", legend.background = element_rect(fill = "transparent"), legend.box.background = element_blank()) +
@@ -206,7 +210,7 @@ panel_a <- ggplot() +
 
 panel_a <- ggplot() +
   geom_tile(data = cloud_frame, aes(x, y)) + 
-  scale_fill_gradientn(name = expression(paste(Delta, "CF (x10"^-2, " CF year"^-1, ")", sep = "")), colours = colores, limits = gradient_range, breaks = c(-0.6, 0, 0.6), oob = scales::squish) +
+  scale_fill_gradientn(name = expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = "")), colours = colores, limits = gradient_range, breaks = c(-60, 0, 60), oob = scales::squish) +
   geom_sf(data = world_proj, color = "grey60", fill = NA, size = 0.2) +
   geom_sf(data= frame_proj, aes(shape = realm, colour = realm), size = 1.2, alpha = 0.7) +
   scale_shape_manual("Realms", values=c(21, 24, 25, 22, 23), breaks = c('Neotropic','Paleartic','Indomalayan', 'Australasia', 'Oceania'))+ #21, 22, 23, 24, 25
@@ -218,7 +222,7 @@ panel_a <- ggplot() +
 
 ###Arrange plot-----------------------------------------------------------------
 yo <- ggarrange(panel_a,
-                ggarrange(hist_all, hist_TMCF, ncol = 2, labels = c("", "c"), common.legend = FALSE, widths = c(4, 4), heights = 1),
+                ggarrange(hist_all, hist_TMCF, ncol = 2, labels = c("b", "c"), common.legend = FALSE, widths = c(4, 4), heights = 1),
                 ggarrange(hist_neotropic, hist_paleartic, hist_indomalayan, hist_australasia, ncol = 4, labels = c("d", "f", "g", "h"), common.legend = FALSE, widths = c(2, 2, 2, 2), heights = 1), # Second row with box and dot plots
                 nrow = 3,
                 ncol = 1,
@@ -227,7 +231,7 @@ yo <- ggarrange(panel_a,
                 widths = 8, heights = c(3, 1, 1))
 
 ###Export-----------------------------------------------------------------------
-jpeg("Figure_1c.jpg", width = 183 , height = 247, units = "mm", pointsize = 12, quality = 100, res = 600)
+tiff("Figure_1c.tiff", width = 183 , height = 247, units = "mm", pointsize = 12, res = 600)
 
 yo
 

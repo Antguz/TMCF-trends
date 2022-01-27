@@ -140,3 +140,7 @@ predicted_model <- function(frame, ncomp = 9, fraction = 0.5, iterations = 10000
 }
 
 results_model <- predicted_model(frame, ncomp = 9, fraction = 0.5, iterations = 5000)
+a <- results_model$predicted
+results_model$performance
+results_model$VIP
+results_model$Coefficients
