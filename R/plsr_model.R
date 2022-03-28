@@ -50,7 +50,7 @@ model_comp <- function(frame, iterations = 1000) {
   
 }
 
-results_components <- model_comp(frame, iterations = 100) 
+results_components <- model_comp(frame, iterations = 1000) 
 
 #Performance function
 performance <- function(observed, predicted) {

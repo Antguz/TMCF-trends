@@ -20,7 +20,6 @@ th <- theme(
 
 ################################################################################
 #Plot of PRESS values
-results_components
 
 #Melt
 press <- melt(results_components, 
@@ -28,7 +27,7 @@ press <- melt(results_components,
               measure.vars = c(.SD), 
               variable.name = "iteration",
               value.name = "PRESS")
-press$PRESS <- press$PRESS*100 #Scale press
+press$PRESS <- press$PRESS*10000 #Scale press
 
 #Summary
 press_summary <- press[, list(mean = mean(PRESS), 
@@ -48,13 +47,14 @@ press_plot <- ggplot(press_summary) +
   geom_point(aes(x = component, y = mean), 
              shape = 21, size = 2, fill = "white") +
   xlab("Components") + 
-  ylab(expression(paste("RMSEP (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  ylab(expression(paste("RMSEP (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   scale_x_continuous(limits = c(0.95, 9.05), expand = c(0,0), breaks = 1:9) +
-  scale_y_continuous(limits = c(0.05, 0.07), expand = c(0,0), breaks = c(0.05, 0.06, 0.07)) +
+  scale_y_continuous(limits = c(5, 7), expand = c(0,0), breaks = c(5, 6, 7)) +
   theme_bw() + th
 
 ################################################################################
 #Plot VIP
+vip <- fread("data/PLSR_VIP.csv")
 vip <- results_model$VIP
 
 #Melt
@@ -98,8 +98,8 @@ vip_plot <- ggplot(vip_summary, aes(x=ECV, y=mean)) +
 
 ################################################################################
 #Plot predicted values
-predicted <- results_model$predicted
-predicted <- predicted*100
+predicted <- fread("data/PLSR_predicted.csv")
+predicted <- predicted*10000
 predicted$value <- 1:nrow(predicted)
 
 #Melt
@@ -109,36 +109,40 @@ predicted_melt <- melt(predicted,
                  variable.name = "iteration",
                  value.name = "predicted")
 
+predicted_melt <- predicted_melt[iteration != "id"]
+
 #Summary
 predicted_summary <- predicted_melt[, list(mean = mean(predicted), 
                                            sd = sd(predicted)),
                                            by = "value"]
-predicted_summary$observed <- frame$cloud*100
+frame <- fread("data/TMCF_slope.csv")
+frame <- subset(frame, remove != "yes")
+predicted_summary$observed <- frame$cloud*10000
 
 #Plot predicted
 predicted_plot <- ggplot(predicted_summary, aes(x=mean, y=observed)) + 
   geom_abline(intercept = 0, slope = 1, colour = "grey", linetype = "dotted") +
   geom_errorbar(aes(xmin=mean-sd, xmax=mean+sd), width= 0.01, colour = "grey", alpha = 0.75) +
   geom_point(shape = 21, size = 2.5, colour = "white", fill ="#659ca2ff", alpha = 0.75) +
-  scale_y_continuous(limits = c(-0.66, 0.66), expand = c(0,0)) + 
-  scale_x_continuous(limits = c(-0.66, 0.66), expand = c(0,0)) + 
-  xlab(expression(paste("Predicted (x10"^-2, " CF year"^-1, ")", sep = ""))) +
-  ylab(expression(paste("Observed (x10"^-2, " CF year"^-1, ")", sep = ""))) +
+  scale_y_continuous(limits = c(-66, 66), expand = c(0,0)) + 
+  scale_x_continuous(limits = c(-66, 66), expand = c(0,0)) + 
+  xlab(expression(paste("Predicted (x10"^-4, " CF year"^-1, ")", sep = ""))) +
+  ylab(expression(paste("Observed (x10"^-4, " CF year"^-1, ")", sep = ""))) +
   geom_smooth(method = "lm", se = FALSE, fullrange = TRUE, colour = "black", size = 0.4) +
   theme_bw() + th
 
 ################################################################################
 #Plot performance values
+performance <- fread("data/PLSR_performance.csv")
 performance <- results_model$performance
-performance$RMSE <- performance$RMSE*100
-
+performance$RMSE <- performance$RMSE*10000
 mean_value <- quantile(performance$RMSE, 0.5)
 
 #Plot
 performance_plot <- ggplot(performance, aes(x = RMSE)) +
   geom_histogram(bins = 30, color="gray", fill = "#659ca2ff", alpha = 0.75) +
-  scale_y_continuous(limits = c(0, 700), expand = c(0, 0.5), n.breaks = 4) +   
-  xlab(expression(paste("RMSE (x10"^-2, " CF year"^-1, ")", sep = ""))) + 
+  scale_y_continuous(limits = c(0, 1000), expand = c(0, 0.5), n.breaks = 4) +   
+  xlab(expression(paste("RMSE (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   geom_vline(xintercept = mean_value, linetype= "dashed") +
   ylab("Frequency") +
   theme_bw() + theme(legend.position = "none") + th
@@ -155,7 +159,7 @@ yo <- ggarrange(press_plot,
                 widths = c(3, 3), heights = c(3, 3))
 
 ###Export-----------------------------------------------------------------------
-jpeg("Figure_3.jpg", width = 183, height = 150, units = "mm", pointsize = 12, quality = 100, res = 600)
+tiff("Figure_3.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
 
 yo
 

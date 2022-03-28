@@ -87,3 +87,5 @@ bayes_apply_realm <- function(frame) {
 bayes_realm_results <- bayes_apply_realm(frame)
 fwrite(bayes_realm_results, "data/bayes_realm_results.csv")
 
+#
+1.448567
