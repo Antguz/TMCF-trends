@@ -51,6 +51,7 @@ model_comp <- function(frame, iterations = 1000) {
 }
 
 results_components <- model_comp(frame, iterations = 1000) 
+fwrite(results_components, "data/PLSR_components.csv")
 
 #Performance function
 performance <- function(observed, predicted) {

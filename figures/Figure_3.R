@@ -21,6 +21,9 @@ th <- theme(
 ################################################################################
 #Plot of PRESS values
 
+#Load data
+results_components <- fread("data/PLSR_components.csv", header = TRUE)
+
 #Melt
 press <- melt(results_components, 
               id.vars = c("component"),
@@ -55,7 +58,6 @@ press_plot <- ggplot(press_summary) +
 ################################################################################
 #Plot VIP
 vip <- fread("data/PLSR_VIP.csv")
-vip <- results_model$VIP
 
 #Melt
 vip_melt <- melt(vip, 
@@ -73,7 +75,7 @@ labels <- c(expression(paste(Delta, "VSWC", sep = "")),
             expression(paste(Delta, "Temperature"['max'], sep = "")),
             expression(paste(Delta, "Temperature"['min'], sep = "")),
             expression(paste(Delta, "Dewpoint", sep = "")),
-            expression(paste(Delta, "Temperature", sep = "")),
+            expression(paste(Delta, "Temperature"['avg'], sep = "")),
             expression(paste(Delta, "Pressure", sep = "")),
             expression(paste(Delta, "ET", sep = "")),
             expression(paste(Delta, "PET", sep = "")),
@@ -136,7 +138,7 @@ predicted_plot <- ggplot(predicted_summary, aes(x=mean, y=observed)) +
 performance <- fread("data/PLSR_performance.csv")
 performance <- results_model$performance
 performance$RMSE <- performance$RMSE*10000
-mean_value <- quantile(performance$RMSE, 0.5)
+mean_value <- median(performance$RMSE, 0.5)
 
 #Plot
 performance_plot <- ggplot(performance, aes(x = RMSE)) +

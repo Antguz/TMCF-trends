@@ -56,7 +56,7 @@ hist_function <- function(variable, name, y_limits, mean, LCI, HCI) {
 
 #Temperature
 temperature <- hist_function("temperature",
-                             expression(paste(Delta, "Temperature (K year"^-1, ")", sep = "")),
+                             expression(paste(Delta, "Temperature"['avg']," (K year"^-1, ")", sep = "")),
                              c(0, 120),
                              0.03103071,
                              0.02971575,
