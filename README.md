@@ -14,21 +14,20 @@ through [IBM PAIRS Geoscope](https://www.ibm.com/products/environmental-intellig
 using Python as an [API](https://pairs.res.ibm.com/tutorial/index.html) platform. Then,
 statistics and figures were created locally using R.
 
-Here you will see four main folders: i) a 'python' folder, which contains the 
+Here you will see three main folders: i) a 'python' folder, which contains the 
 scripts for API access to IBM PAIRS Geoscope, ii) an 'R' folder, which contains 
-scripts of the statistics applied in the manuscript, iii) 'figures' folder that
-contains the scripts for visualization, and iv) a 'data' folder as path to 
-data for easy access. If you use these codes or data, please cite them in addition
-to the supporting manuscript.
+scripts of the statistics applied in the manuscript, and iii) 'figures' folder that
+contains the scripts for visualization. A fourth folder of 'data' could be create 
+as path for easy access to data to reproduce these codes. If you use these codes, 
+please cite them in addition to the supporting manuscript.
 
 The data used in this manuscript that accompany these codes are available at the 
-Tropi-Dry Dataverse (https://doi.org/10.7910/DVN/A25Q8V). If your interest is to 
-use the location or names of the TMCFs please cite Aldrich et al. (1997) following 
-the instructions provided by [UN Environment Programme World Conservation Monitoring Centre](https://resources.unep-wcmc.org/products/84c3a142c4354cc1a75ac9e9ee8538e2).
+Tropi-Dry Dataverse (https://doi.org/10.7910/DVN/A25Q8V). Please follow the 
+instructions described there for proper citation of the data.
 
 <br />
 
-#### Citing codes, data, and manuscript.
+#### Citing codes, manuscript, and data.
 
 ##### Codes
 
