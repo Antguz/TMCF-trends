@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/422720051.svg)](https://zenodo.org/badge/latestdoi/422720051)
+
 # TMCF-trends
 
 <br />
