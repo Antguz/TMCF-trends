@@ -34,15 +34,15 @@ instructions described there for proper citation of the data.
 ##### Codes
 
 ```
-@article{cloud_codes,
+@codes{cloud_codes,
   author       = {Guzmán, J.A., Hamann, H. F., and Sánchez-Azofeifa, G.A.},
   title        = {Cloudiness has declined in 70% of the Tropical Montane Cloud Forests},
   month        = abr,
   year         = 2022,
   publisher    = {Zenodo},
   version      = {v0.1},
-  doi          = {10.5281/zenodo.pending},
-  url          = {https://doi.org/10.5281/zenodo.pending}
+  doi          = {10.5281/zenodo.6476817},
+  url          = {https://doi.org/10.5281/zenodo.6476817}
 }
 
 ```
