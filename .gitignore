@@ -38,9 +38,3 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-#Figures
-*.jpg
-*.tiff
-
-# ASCII files
-*.csv
