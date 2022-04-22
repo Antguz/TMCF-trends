@@ -1,14 +1,16 @@
 ################################################################################
-### Function for plotting results from PLSR model
+### @title Function for plotting results from PLSR model
 ################################################################################
 
-###Select libraries-------------------------------------------------------------
+# Figure 3 in the manuscript
+
+### Select libraries------------------------------------------------------------
 library(data.table)
 library(ggplot2)
 library(ggpubr)
 
-###Plot features----------------------------------------------------------------
-#Theme
+### Plot features---------------------------------------------------------------
+# Theme
 th <- theme(
   panel.background = element_rect(fill = "transparent"),
   plot.background = element_rect(fill = "transparent", color = NA),
@@ -19,12 +21,12 @@ th <- theme(
   panel.grid.minor = element_blank())
 
 ################################################################################
-#Plot of PRESS values
+# Plot of PRESS values
 
-#Load data
+# Load data
 results_components <- fread("data/PLSR_components.csv", header = TRUE)
 
-#Melt
+# Melt
 press <- melt(results_components, 
               id.vars = c("component"),
               measure.vars = c(.SD), 
@@ -32,7 +34,7 @@ press <- melt(results_components,
               value.name = "PRESS")
 press$PRESS <- press$PRESS*10000 #Scale press
 
-#Summary
+# Summary
 press_summary <- press[, list(mean = mean(PRESS), 
                               quantile05 = quantile(PRESS, 0.05),
                               quantile95 = quantile(PRESS, 0.95),
@@ -40,7 +42,7 @@ press_summary <- press[, list(mean = mean(PRESS),
                        by = "component"]
 press_summary$component <- 1:nrow(press_summary)
 
-#Plot
+# Plot
 press_plot <- ggplot(press_summary) +
   geom_ribbon(aes(x = component, ymin = quantile05, ymax = quantile95), 
               fill = "#659ca2ff", alpha = 0.5) +
@@ -56,7 +58,7 @@ press_plot <- ggplot(press_summary) +
   theme_bw() + th
 
 ################################################################################
-#Plot VIP
+# Plot VIP
 vip <- fread("data/PLSR_VIP.csv")
 
 #Melt
@@ -80,15 +82,13 @@ labels <- c(expression(paste(Delta, "VSWC", sep = "")),
             expression(paste(Delta, "ET", sep = "")),
             expression(paste(Delta, "PET", sep = "")),
             expression(paste(Delta, "Precipitation", sep = "")))
-            
-              
 
 vip_summary <- vip_summary[order(mean)]
 ECV <- rev(as.character(vip_summary$ECV))
 vip_summary$ECV <- factor(vip_summary$ECV, level = ECV,
                           labels = labels)
 
-#Plot VIP
+# Plot VIP
 vip_plot <- ggplot(vip_summary, aes(x=ECV, y=mean)) + 
   geom_bar(stat="identity", color="gray", fill = "#659ca2ff", alpha = 0.75) +
   geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width= 0.01) +
@@ -99,12 +99,12 @@ vip_plot <- ggplot(vip_summary, aes(x=ECV, y=mean)) +
 
 
 ################################################################################
-#Plot predicted values
+# Plot predicted values
 predicted <- fread("data/PLSR_predicted.csv")
 predicted <- predicted*10000
 predicted$value <- 1:nrow(predicted)
 
-#Melt
+# Melt
 predicted_melt <- melt(predicted, 
                  id.vars = c("value"),
                  measure.vars = c(.SD), 
@@ -113,7 +113,7 @@ predicted_melt <- melt(predicted,
 
 predicted_melt <- predicted_melt[iteration != "id"]
 
-#Summary
+# Summary
 predicted_summary <- predicted_melt[, list(mean = mean(predicted), 
                                            sd = sd(predicted)),
                                            by = "value"]
@@ -121,7 +121,7 @@ frame <- fread("data/TMCF_slope.csv")
 frame <- subset(frame, remove != "yes")
 predicted_summary$observed <- frame$cloud*10000
 
-#Plot predicted
+# Plot predicted
 predicted_plot <- ggplot(predicted_summary, aes(x=mean, y=observed)) + 
   geom_abline(intercept = 0, slope = 1, colour = "grey", linetype = "dotted") +
   geom_errorbar(aes(xmin=mean-sd, xmax=mean+sd), width= 0.01, colour = "grey", alpha = 0.75) +
@@ -134,13 +134,13 @@ predicted_plot <- ggplot(predicted_summary, aes(x=mean, y=observed)) +
   theme_bw() + th
 
 ################################################################################
-#Plot performance values
+# Plot performance values
 performance <- fread("data/PLSR_performance.csv")
 performance <- results_model$performance
 performance$RMSE <- performance$RMSE*10000
 mean_value <- median(performance$RMSE, 0.5)
 
-#Plot
+# Plot
 performance_plot <- ggplot(performance, aes(x = RMSE)) +
   geom_histogram(bins = 30, color="gray", fill = "#659ca2ff", alpha = 0.75) +
   scale_y_continuous(limits = c(0, 1000), expand = c(0, 0.5), n.breaks = 4) +   
@@ -150,19 +150,19 @@ performance_plot <- ggplot(performance, aes(x = RMSE)) +
   theme_bw() + theme(legend.position = "none") + th
 
 ###Arrange plot-----------------------------------------------------------------
-yo <- ggarrange(press_plot,
-                vip_plot,
-                predicted_plot,
-                performance_plot,
-                nrow = 2,
-                ncol = 2,
-                labels = c("a", "b", "c", "d"), 
-                common.legend = TRUE,
-                widths = c(3, 3), heights = c(3, 3))
+main <- ggarrange(press_plot,
+                  vip_plot,
+                  predicted_plot,
+                  performance_plot,
+                  nrow = 2,
+                  ncol = 2,
+                  labels = c("a", "b", "c", "d"), 
+                  common.legend = TRUE,
+                  widths = c(3, 3), heights = c(3, 3))
 
 ###Export-----------------------------------------------------------------------
 tiff("Figure_3.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
 
-yo
+main
 
 dev.off()

@@ -2,18 +2,20 @@
 ### Function for plotting distributions of ECV on TMCF
 ################################################################################
 
+# Figure 2 in the manuscript
+
 ###Select libraries-------------------------------------------------------------
 library(data.table)
 library(ggplot2)
 library(ggpubr)
 
-###Load data and layers---------------------------------------------------------
-#Load ASCI of trends
+### Load data and layers--------------------------------------------------------
+# Load ASCI of trends
 frame <- as.data.frame(fread("data/TMCF_slope.csv"))
 frame <- subset(frame, remove != "yes") #Remove duplicates
 
-###Plot features----------------------------------------------------------------
-#Theme
+###Plot features ---------------------------------------------------------------
+# Theme
 th <- theme(
   panel.background = element_rect(fill = "transparent"),
   plot.background = element_rect(fill = "transparent", color = NA),
@@ -23,12 +25,12 @@ th <- theme(
   panel.grid.major = element_blank(),
   panel.grid.minor = element_blank())
 
-#Color selection
+# Color selection
 colores <- rev(c("#67001f", "#b2182b", "#d6604d", "#f4a582", 
                  "#fddbc7", "#f7f7f7", "#d1e5f0", "#92c5de", 
                  "#4393c3", "#2166ac", "#053061"))
 
-####Histograms------------------------------------------------------------------
+###Histograms function ----------------------------------------------------------
 hist_function <- function(variable, name, y_limits, mean, LCI, HCI) {
   
   variable_limits <- c(-max(abs(range(frame[, variable], na.rm = TRUE))), 
@@ -126,18 +128,18 @@ PET <- hist_function("PET",
                     0.349115655259898)
 
 ###Arrange plot-----------------------------------------------------------------
-yo <- ggarrange(temperature, min_temperature, max_temperature,
-                precipitation, dewpoint, pressure,
-                vswc, ET, PET,
-                nrow = 3,
-                ncol = 3,
-                labels = c("a", "b", "c", "d", "e", "f", "g", "h", "i"), 
-                common.legend = FALSE,
-                widths = c(3, 3, 3), heights = c(3, 3, 3))
+main <- ggarrange(temperature, min_temperature, max_temperature,
+                  precipitation, dewpoint, pressure,
+                  vswc, ET, PET,
+                  nrow = 3,
+                  ncol = 3,
+                  labels = c("a", "b", "c", "d", "e", "f", "g", "h", "i"), 
+                  common.legend = FALSE,
+                  widths = c(3, 3, 3), heights = c(3, 3, 3))
 
 ###Export-----------------------------------------------------------------------
 tiff("Figure_2.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
 
-yo
+main
 
 dev.off()
