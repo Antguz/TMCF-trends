@@ -14,7 +14,8 @@ library(plsVarSel)
 ### Load frame------------------------------------------------------------------
 frame <- fread("data/TMCF_slope.csv")
 frame <- subset(frame, remove != "yes") #Remove duplicates
-frame <- frame[, c(9:18)]
+weights <- frame$weight
+frame <- frame[, c(10:19)]
 frame <- na.exclude(frame)
 
 ################################################################################
@@ -48,7 +49,8 @@ model_comp <- function(frame, iterations = 1000) {
                   validation = "CV",
                   trace= FALSE, 
                   method = "oscorespls",
-                  segments = 10)
+                  segments = 10,
+                  weights = weights)
     
     # Export PRESS values
     df <- data.table(t(model$validation$PRESS))
@@ -135,7 +137,8 @@ predicted_model <- function(frame, ncomp = 9, fraction = 0.5, iterations = 10000
                   ncomp= ncomp,
                   validation = "none",
                   trace= FALSE, 
-                  method = "oscorespls")
+                  method = "oscorespls",
+                  weights = weights)
     
     # Return predicted
     value <- predict(model, newdata = frame, ncomp = ncomp, type= "response")[,,1]
@@ -190,3 +193,4 @@ fwrite(results_model$predicted, "data/PLSR_predicted.csv")
 fwrite(results_model$performance, "data/PLSR_performance.csv")
 fwrite(results_model$VIP, "data/PLSR_VIP.csv")
 fwrite(results_model$Coefficients, "data/PLSR_coefficients.csv")
+

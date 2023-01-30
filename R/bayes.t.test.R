@@ -19,7 +19,8 @@ library(raster)
 ### Load frame------------------------------------------------------------------
 frame <- fread("data/TMCF_slope.csv")
 frame <- subset(frame, remove != "yes") #Remove duplicates
-frame <- frame[, c(9:18)] #Select ECVs
+weights <- frame$weight
+frame <- frame[, c(10:19)] #Select ECVs
 frame <- frame*10000 #Scale to x10-4
 
 ################################################################################
@@ -38,7 +39,7 @@ bayes_apply <- function(frame) {
     variable <- na.exclude(frame[, col_names[i]])
     
     # Apply bayes
-    bayes <- bayes.t.test(variable)
+    bayes <- bayes.t.test(variable, weights = weights)
     
     # Get results
     results <- bayes$stats
@@ -57,9 +58,10 @@ bayes_apply <- function(frame) {
 
 # Apply function
 bayes_results <- bayes_apply(frame)
+bayes_results[, 3:18] <- round(bayes_results[, 3:18], 4)
 
 # Export results
-fwrite(bayes_results, "data/bayes_results.csv")
+fwrite(bayes_results, "data/bayes_all_results.csv")
 
 ################################################################################
 ### Step 2 - Mean estimated of trends per realm
@@ -72,15 +74,15 @@ fwrite(bayes_results, "data/bayes_results.csv")
 ### Bayes t.test per realms
 frame <- fread("data/TMCF_slope.csv")
 frame <- subset(frame, remove != "yes") #Remove duplicates
-frame <- frame[, c(7, 9:18)]
-frame[, c(2:11)] <- frame[, c(2:11)]*10000 #Scale
+frame <- frame[, c(4, 8, 10:19)] #Select ECVs
+frame[, 3:12] <- frame[, 3:12]*10000 #Scale to x10-4
 
 #Function
 bayes_apply_realm <- function(frame) {
   
   # Make a copy to fill
   frame <- as.data.frame(frame)
-  col_names <- colnames(frame)[-1]
+  col_names <- colnames(frame)[3:12]
   col_realms <- unique(frame$realm)[1:4] #remove Oceania
   complete <- data.table()
   
@@ -89,15 +91,20 @@ bayes_apply_realm <- function(frame) {
     
     # Subset data
     sub_realm <- subset(frame, realm == col_realms[i])
+    weight <- sub_realm$weight
     
     # Loop over ECV
     for(ii in 1:length(col_names)) {
       
+      variable <- sub_realm[, col_names[ii]]
+      
       # Remove missing values
-      variable <- na.exclude(sub_realm[, col_names[ii]])
+      na_values <- is.na(sub_realm[, col_names[ii]])
+      variable <- variable[!na_values]
+      sub_weigth <- weight[!na_values]
       
       # Apply bayes
-      bayes <- bayes.t.test(variable)
+      bayes <- bayes.t.test(variable, weights = sub_weigth)
       
       # Get results
       results <- bayes$stats
@@ -120,6 +127,7 @@ bayes_apply_realm <- function(frame) {
 
 # Apply function
 bayes_realm_results <- bayes_apply_realm(frame)
+bayes_realm_results[, 4:19] <- round(bayes_realm_results[, 4:19], 4)
 
 # Export results
 fwrite(bayes_realm_results, "data/bayes_realm_results.csv")

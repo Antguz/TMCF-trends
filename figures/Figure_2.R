@@ -1,145 +1,173 @@
 ################################################################################
-### Function for plotting distributions of ECV on TMCF
+### Function for plotting trends in low clouds and distribution of TMCF
 ################################################################################
 
-# Figure 2 in the manuscript
+# Figure 1 in the manuscript.
 
 ###Select libraries-------------------------------------------------------------
 library(data.table)
 library(ggplot2)
-library(ggpubr)
+library(raster)
+library(sf)
+library(rnaturalearth)
+library(scales)
+library(spatstat)
+library(graticule)
+library(ggridges)
 
-### Load data and layers--------------------------------------------------------
+source("R/area_weigth.R")
+
+### TMCF cloud fraction --------------------------------------------------------
 # Load ASCI of trends
-frame <- as.data.frame(fread("data/TMCF_slope.csv"))
+frame <- fread("data/TMCF_slope.csv")
 frame <- subset(frame, remove != "yes") #Remove duplicates
+frame$cloud <- frame$cloud*10000
 
-###Plot features ---------------------------------------------------------------
+### Global cloud fraction ------------------------------------------------------
+# Load cloud trends base layer
+cloud <- raster("data/cloud_trends.tiff")
+
+# Load world layers
+world <- ne_countries(scale='large',returnclass = 'sf')
+
+#Mask landmasses
+cloud_mask <- mask(cloud, world)
+
+#Create frame
+cloud_frame <- as.data.frame(cloud_mask, xy = TRUE)
+cloud_frame <- as.data.table(na.exclude(cloud_frame))
+
+#Subset by Tropics of Cancer and Capriciousness
+cloud_frame <- cloud_frame[y >= -23.43629]
+cloud_frame <- cloud_frame[y <= 23.43629]
+
+# Histogram range scale
+cloud_frame$cloud_trends <- cloud_frame$cloud_trends*10000
+
+### Load statistics ------------------------------------------------------------
+
+#Statistics
+cloud_stats <- fread("data/bayes_all_results.csv")
+cloud_stats <- cloud_stats[variable == "cloud"]
+cloud_stats$realm <- "TMCF"
+realm_stats <- fread("data/bayes_realm_results.csv")
+realm_stats <- realm_stats[variable == "cloud"]
+
+cloud_stats <- cloud_stats[, c("realm", "parameter", "mean", "sd")]
+cloud_stats <- cloud_stats[parameter == "mu"]
+realm_stats <- realm_stats[, c("realm", "parameter", "mean", "sd")]
+realm_stats <- realm_stats[parameter == "mu"]
+
+stats <- rbind(cloud_stats, realm_stats)
+
+#Global stats
+w = area_weigth(cloud_frame$y, cloud_frame$x, res = c(0.025, 0.025))
+cloud_frame <- na.exclude(cloud_frame)
+median_value <- weighted.median(x = cloud_frame$cloud_trends, w = w)
+mean_value <- weighted.mean(x = cloud_frame$cloud_trends, w = w, na.rm = TRUE)
+
+#Add
+stats <- rbind(stats, 
+               data.table(realm = "Tropical landmasses", 
+                          parameter = "mu", 
+                          mean = median_value, 
+                          sd = NA))
+
+stats$realm <- as.factor(stats$realm)
+stats$realm <- factor(stats$realm, levels = c("Australasia",
+                                            "Indomalayan",
+                                            "Paleartic", 
+                                            "Neotropic",
+                                            "TMCF",
+                                            "Tropical landmasses"))
+
+#Merge TMCF and global
+clouds <- frame[, c("realm", "cloud")]
+clouds <- subset(clouds, realm != "Oceania")
+tmcf <- clouds
+tmcf$realm <- "TMCF"
+global <- data.table(realm = "Tropical landmasses", cloud = cloud_frame$cloud_trends)
+
+data <- rbind(clouds, global, tmcf)
+data$realm <- as.factor(data$realm)
+data$realm <- factor(data$realm, levels = c("Australasia",
+                                            "Indomalayan",
+                                            "Paleartic", 
+                                            "Neotropic",
+                                            "TMCF",
+                                            "Tropical landmasses"))
+
+
+### Plot basic features---------------------------------------------------------
+
+#Range
+gradient_range <- c(-70, 70)
+gradient_hist <- c(-70, 70)
+
+# Limits
+limits_breaks = c(-60, 0, 60)
+limits_labels = c(-60, 0, 60)
+
 # Theme
 th <- theme(
   panel.background = element_rect(fill = "transparent"),
   plot.background = element_rect(fill = "transparent", color = NA),
   legend.background = element_rect(fill = "transparent"),
   legend.box.background = element_rect(fill = "transparent"),
-  panel.spacing = unit(0,"null"),
-  panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank())
+  panel.spacing = unit(0,"null"))
 
 # Color selection
 colores <- rev(c("#67001f", "#b2182b", "#d6604d", "#f4a582", 
-                 "#fddbc7", "#f7f7f7", "#d1e5f0", "#92c5de", 
-                 "#4393c3", "#2166ac", "#053061"))
+                          "#fddbc7", "#f7f7f7", "#d1e5f0", "#92c5de", 
+                          "#4393c3", "#2166ac", "#053061"))
+                          
 
-###Histograms function ----------------------------------------------------------
-hist_function <- function(variable, name, y_limits, mean, LCI, HCI) {
-  
-  variable_limits <- c(-max(abs(range(frame[, variable], na.rm = TRUE))), 
-                       max(abs(range(frame[, variable], na.rm = TRUE))))
-  variable_quantile <- quantile(frame[, variable], 0.5, na.rm = TRUE)
-  
-  plot_export <- ggplot(frame, aes(x = frame[, variable])) +
-    geom_histogram(aes(fill = ..x.., color = ..x..), bins = 30, colour = "grey75") +
-    scale_y_continuous(limits = y_limits, expand = c(0, 0.5), n.breaks = 4) +   
-    scale_x_continuous(limits = variable_limits, expand = c(0, 0)) +
-    scale_fill_gradientn(colours = colores, limits = variable_limits) +
-    geom_vline(xintercept = mean, linetype= "longdash", colour = "grey20") +
-    geom_vline(xintercept = LCI, linetype= "dotted", colour = "grey20") +
-    geom_vline(xintercept = HCI, linetype= "dotted", colour = "grey20") +
-    xlab(name) + 
-    ylab("Frequency") +
-    theme_classic() + theme(legend.position = "none") + th +
-    theme(
-      panel.background = element_rect(fill = "transparent"),
-      plot.background = element_rect(fill = "transparent", color = NA))
-  
-}
+### Plot -----------------------------------------------------------------------
 
-
-
-#Temperature
-temperature <- hist_function("temperature",
-                             expression(paste(Delta, "Temperature"['avg']," (K year"^-1, ")", sep = "")),
-                             c(0, 120),
-                             0.03103071,
-                             0.02971575,
-                             0.03228193)
-
-#Temperature min
-min_temperature <- hist_function("min_temperature",
-                             expression(paste(Delta, "Temperature"['min']," (K year"^-1, ")", sep = "")),
-                             c(0, 120),
-                             0.01928038,
-                             0.01863102,
-                             0.0199509)
-
-#Temperature max
-max_temperature <- hist_function("max_temperature",
-                             expression(paste(Delta, "Temperature"['max']," (K year"^-1, ")", sep = "")),
-                             c(0, 120),
-                             0.0187762,
-                             0.0180836,
-                             0.01950891)
-
-#Precipitation
-precipitation <- hist_function("precipitation",
-                               expression(paste(Delta, "Precipitation (mm day"^-1, "year"^-1, ")", sep = "")),
-                               c(0, 120),
-                               -0.001942869,
-                               -0.004725074,
-                               0.0007131467)
-
-#Dewpoint
-dewpoint <- hist_function("dewpoint",
-                          expression(paste(Delta, "Dewpoint (K year"^-1, ")", sep = "")),
-                          c(0, 120),
-                          0.03053587,
-                          0.0291526,
-                          0.03192858)
-
-#Pressure
-pressure <- hist_function("pressure",
-                          expression(paste(Delta, "Pressure (Pa year"^-1, ")", sep = "")),
-                          c(0, 120),
-                          1.518385,
-                          1.44925,
-                          1.587649)
-#VSWC
-vswc <- hist_function("vswc",
-                      expression(paste(Delta, "VSWC (m"^3,"m"^-3, " year"^-1, ")", sep = "")),
-                      c(0, 160),
-                      0.000055236397,
-                      0.000011446997853383,
-                      0.000096916527331151)
-
-#ET
-ET <- hist_function("ET",
-                    expression(paste(Delta, "ET (mm month"^-1, " year"^-1, ")", sep = "")),
-                    c(0, 160),
-                    0.000025566240612677,
-                    -0.000003829778800594,
-                    0.000055163888778894)
-
-#PET
-PET <- hist_function("PET",
-                     expression(paste(Delta, "PET (mm month"^-1, " year"^-1, ")", sep = "")),
-                    c(0, 160),
-                    0.331283388621889,
-                    0.313842646321805,
-                    0.349115655259898)
-
-###Arrange plot-----------------------------------------------------------------
-main <- ggarrange(temperature, min_temperature, max_temperature,
-                  precipitation, dewpoint, pressure,
-                  vswc, ET, PET,
-                  nrow = 3,
-                  ncol = 3,
-                  labels = c("a", "b", "c", "d", "e", "f", "g", "h", "i"), 
-                  common.legend = FALSE,
-                  widths = c(3, 3, 3), heights = c(3, 3, 3))
+plot <- ggplot() + 
+  geom_density_ridges_gradient(
+    data = data, 
+    aes(x = cloud, y = realm, fill = stat(x)),
+    jittered_points = TRUE,
+    position = position_points_jitter(width = 0.05, height = 0),
+    point_shape = '|',
+    point_size = 2,
+    point_alpha = 1,
+    scale = 0.9) +
+  geom_segment(data = stats, 
+               aes(x = mean, 
+                   xend = mean, 
+                   y = as.numeric(realm), 
+                   yend = as.numeric(realm) + c(0.5)),
+               color = "black", inherit.aes = F) +
+  geom_segment(data = stats, 
+               aes(x = (mean - sd), xend = (mean - sd), 
+                   y = as.numeric(realm), yend = as.numeric(realm) + c(0.5)),
+               color = "black", linetype = "dotted", inherit.aes = F) +
+  geom_segment(data = stats, 
+               aes(x = (mean + sd), xend = (mean + sd), 
+                   y = as.numeric(realm), yend = as.numeric(realm) + c(0.5)),
+               color = "black", linetype = "dotted", inherit.aes = F) +
+  geom_vline(xintercept = 0, 
+             linetype= "dashed", 
+             colour = "grey50") +
+  scale_point_size_continuous(breaks = c(0, 1, 1, 1, 1)) +
+  scale_fill_gradientn(colours = colores, 
+                       limits = gradient_range) +
+  coord_cartesian(xlim=c(-60, 60)) +
+  scale_y_discrete(expand = c(0.02, 0)) +
+  theme_ridges(grid = FALSE, 
+               center_axis_labels = TRUE) +
+  xlab(expression(paste(Delta, "CF (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
+  ylab("Realms") +
+  theme(legend.position = "none") + th +
+  theme(
+    panel.background = element_rect(fill = "transparent"),
+    plot.background = element_rect(fill = "transparent", color = NA))
 
 ###Export-----------------------------------------------------------------------
-tiff("Figure_2.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
+tiff("Figure_2a.tiff", width = 140, height = 150, units = "mm", pointsize = 12, res = 600)
 
-main
+plot
 
 dev.off()
