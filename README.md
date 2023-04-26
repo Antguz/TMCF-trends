@@ -8,8 +8,7 @@ These codes are used to estimate trends of low-cloud fraction at the Tropical
 Mountain Cloud Forest. These are also used to estimate trends of other Essential 
 Climatic Variables (ECVs).
 
-The codes are the base of the manuscript 'Cloudiness has declined in 70% of the 
-Tropical Montane Cloud Forests' by Guzmán, Hamann, and Sánchez-Azofeifa.
+The codes are the base of the manuscript 'Multi-decadal trends of low clouds at the Tropical Montane Cloud Forests' by Guzmán, Hamann, and Sánchez-Azofeifa.
 
 Trends of low-cloud fraction and other ECVs were optioned from [ERA5](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview) 
 through [IBM PAIRS Geoscope](https://www.ibm.com/products/environmental-intelligence-suite/geospatial-analytics) 
