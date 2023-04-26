@@ -14,7 +14,7 @@ Tropical Montane Cloud Forests' by Guzmán, Hamann, and Sánchez-Azofeifa.
 Trends of low-cloud fraction and other ECVs were optioned from [ERA5](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview) 
 through [IBM PAIRS Geoscope](https://www.ibm.com/products/environmental-intelligence-suite/geospatial-analytics) 
 using Python as an [API](https://pairs.res.ibm.com/tutorial/index.html) platform. Then,
-statistics and figures were created locally using R.
+statistics and figures were created locally using R or QGIS (Figure 1).
 
 Here you will see three main folders: i) a 'python' folder, which contains the 
 scripts for API access to IBM PAIRS Geoscope, ii) an 'R' folder, which contains 
@@ -36,11 +36,11 @@ instructions described there for proper citation of the data.
 ```
 @codes{cloud_codes,
   author       = {Guzmán, J.A., Hamann, H. F., and Sánchez-Azofeifa, G.A.},
-  title        = {Cloudiness has declined in 70% of the Tropical Montane Cloud Forests},
+  title        = {Multi-decadal trends of low clouds at the Tropical Montane Cloud Forests},
   month        = abr,
-  year         = 2022,
+  year         = 2023,
   publisher    = {Zenodo},
-  version      = {v0.1},
+  version      = {v0.2},
   doi          = {10.5281/zenodo.6476817},
   url          = {https://doi.org/10.5281/zenodo.6476817}
 }
@@ -52,7 +52,7 @@ instructions described there for proper citation of the data.
 ```
 @article{cloud_manuscript,
   author       = {Guzmán, J.A., Hamann, H. F., and Sánchez-Azofeifa, G.A.},
-  title        = {Cloudiness has declined in 70% of the Tropical Montane Cloud Forests},
+  title        = {Multi-decadal trends of low clouds at the Tropical Montane Cloud Forests},
   journal      = {pending},
   year         = {pending},
   volume       = {pending},
