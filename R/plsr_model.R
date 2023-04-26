@@ -1,10 +1,10 @@
 ################################################################################
-### Function to predict the importance and prediction of low cloud fraction
+#' @title Function to predict the importance and prediction of low cloud fraction
 ################################################################################
 
-# The aim of these codes is to evaluate if trends of ECVs are able to predict 
-# trends of low-cloud fraction, and then see which ECV is the most important
-# for doing so. 
+#' @description The aim of these codes is to evaluate if trends of ECVs are able 
+#' to predict trends of low-cloud fraction, and then see which ECV is the most 
+#' important for doing so. 
 
 ### Select libraries------------------------------------------------------------
 library(data.table)
@@ -15,7 +15,7 @@ library(plsVarSel)
 frame <- fread("data/TMCF_slope.csv")
 frame <- subset(frame, remove != "yes") #Remove duplicates
 weights <- frame$weight
-frame <- frame[, c(10:19)]
+frame <- frame[, c(10:18)]
 frame <- na.exclude(frame)
 
 ################################################################################
@@ -45,7 +45,7 @@ model_comp <- function(frame, iterations = 1000) {
                   data = frame,
                   scale = TRUE,
                   center = TRUE,
-                  ncomp= 9,
+                  ncomp= 8,
                   validation = "CV",
                   trace= FALSE, 
                   method = "oscorespls",
@@ -62,7 +62,7 @@ model_comp <- function(frame, iterations = 1000) {
   }
   
   # Provide number of iteration
-  component <- paste0("comp_", 1:9)
+  component <- paste0("comp_", 1:8)
   
   # Add components
   complete_frame <- cbind(component = component, complete_frame)
@@ -109,7 +109,7 @@ performance <- function(observed, predicted) {
 }
 
 # Predicted model
-predicted_model <- function(frame, ncomp = 9, fraction = 0.5, iterations = 10000) {
+predicted_model <- function(frame, ncomp = 8, fraction = 0.5, iterations = 10000) {
   
   # Empty frames to fill
   predicted_frame <- data.table()
@@ -167,13 +167,13 @@ predicted_model <- function(frame, ncomp = 9, fraction = 0.5, iterations = 10000
   # Provide names to VIP
   colnames(VIP_frame) <- c("iteration", "temperature", "min_temperature",
                            "max_temperature", "dewpoint", "pressure", 
-                           "precipitation", "vswc", "ET", "PET")
+                           "precipitation", "vswc", "PET")
   
   # Provide names coefficients
   colnames(coefficients_frame) <- c("iteration", "intercept", "temperature", 
                                     "min_temperature", "max_temperature", 
                                     "dewpoint", "pressure", "precipitation", 
-                                    "vswc", "ET", "PET")
+                                    "vswc", "PET")
   
   # Return compiled results
   results <- list(predicted = predicted_frame,
@@ -186,7 +186,7 @@ predicted_model <- function(frame, ncomp = 9, fraction = 0.5, iterations = 10000
 }
 
 # Apply function
-results_model <- predicted_model(frame, ncomp = 9, fraction = 0.5, iterations = 5000)
+results_model <- predicted_model(frame, ncomp = 8, fraction = 0.5, iterations = 5000)
 
 # Export results
 fwrite(results_model$predicted, "data/PLSR_predicted.csv")

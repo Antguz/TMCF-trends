@@ -1,8 +1,8 @@
 ################################################################################
-### Function for plotting distributions of ECV on TMCF
+#' @title Function for plotting distributions of ECV on TMCF
 ################################################################################
 
-# Figure 2 in the manuscript
+#' @description Figure 3 of the manuscript
 
 ###Select libraries-------------------------------------------------------------
 library(data.table)
@@ -112,33 +112,26 @@ vswc <- hist_function("vswc",
                       0.986/10000)
 
 #ET
-ET <- hist_function("ET",
-                    expression(paste(Delta, "ET (mm month"^-1, " year"^-1, ")", sep = "")),
-                    c(0, 160),
-                    0.2549/10000,
-                    -0.0341/10000,
-                    0.5646/10000)
-
-#PET
 PET <- hist_function("PET",
                      expression(paste(Delta, "PET (mm month"^-1, " year"^-1, ")", sep = "")),
-                    c(0, 160),
-                    3314.7192/10000,
-                    3133.6653/10000,
-                    3486.0631/10000)
+                     c(0, 160),
+                     0.2549/10000,
+                     -0.0341/10000,
+                     0.5646/10000)
+
 
 ###Arrange plot-----------------------------------------------------------------
 main <- ggarrange(temperature, min_temperature, max_temperature,
                   precipitation, dewpoint, pressure,
-                  vswc, ET, PET,
+                  vswc, PET,
                   nrow = 3,
                   ncol = 3,
-                  labels = c("a", "b", "c", "d", "e", "f", "g", "h", "i"), 
+                  labels = c("a", "b", "c", "d", "e", "f", "g", "h"), 
                   common.legend = FALSE,
                   widths = c(3, 3, 3), heights = c(3, 3, 3))
 
 ###Export-----------------------------------------------------------------------
-tiff("Figure_2.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
+tiff("Figure_3.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
 
 main
 

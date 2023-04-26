@@ -1,6 +1,9 @@
 ################################################################################
-### Function to compare the mean trend from 0 using Bayes
+#' @title Function to compare the mean trends from 0 using Bayes
 ################################################################################
+
+#' @description It computes the mean estimate and the credible intervals of the 
+#' climatic trends and evaluate if such means differ from zero.
 
 ###Select libraries-------------------------------------------------------------
 library(data.table)
@@ -9,7 +12,7 @@ library(MASS)
 library(raster)
 
 ################################################################################
-### step 1 - Global mean estimated of trends
+### Step 1 - Global mean estimated of trends
 ################################################################################
 
 # This step is focused on compute the mean estimate of the climatic datasets on

@@ -1,8 +1,8 @@
 ################################################################################
-### @title Function for plotting results from PLSR model
+#' @title Function for plotting results from PLSR model
 ################################################################################
 
-# Figure 3 in the manuscript
+#' @description Figure 3 of the manuscript
 
 ### Select libraries------------------------------------------------------------
 library(data.table)
@@ -53,7 +53,7 @@ press_plot <- ggplot(press_summary) +
              shape = 21, size = 2, fill = "white") +
   xlab("Components") + 
   ylab(expression(paste("RMSEP (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
-  scale_x_continuous(limits = c(0.95, 9.05), expand = c(0,0), breaks = 1:9) +
+  scale_x_continuous(limits = c(0.95, 8.05), expand = c(0,0), breaks = 1:9) +
   scale_y_continuous(limits = c(5, 7), expand = c(0,0), breaks = c(5, 6, 7)) +
   theme_bw() + th
 
@@ -76,12 +76,11 @@ vip_summary <- vip_melt[, list(mean = mean(VIP),
 labels <- c(expression(paste(Delta, "VSWC", sep = "")),
             expression(paste(Delta, "Temperature"['max'], sep = "")),
             expression(paste(Delta, "Temperature"['min'], sep = "")),
-            expression(paste(Delta, "Dewpoint", sep = "")),
-            expression(paste(Delta, "Temperature"['avg'], sep = "")),
             expression(paste(Delta, "Pressure", sep = "")),
-            expression(paste(Delta, "ET", sep = "")),
+            expression(paste(Delta, "Temperature"['avg'], sep = "")),
+            expression(paste(Delta, "Precipitation", sep = "")),
             expression(paste(Delta, "PET", sep = "")),
-            expression(paste(Delta, "Precipitation", sep = "")))
+            expression(paste(Delta, "Dewpoint", sep = "")))
 
 vip_summary <- vip_summary[order(mean)]
 ECV <- rev(as.character(vip_summary$ECV))
@@ -119,7 +118,7 @@ predicted_summary <- predicted_melt[, list(mean = mean(predicted),
                                            by = "value"]
 frame <- fread("data/TMCF_slope.csv")
 frame <- subset(frame, remove != "yes")
-frame <- frame[, c(10:19)]
+frame <- frame[, c(10:18)]
 frame <- na.exclude(frame)
 predicted_summary$observed <- frame$cloud*10000
 
@@ -138,13 +137,13 @@ predicted_plot <- ggplot(predicted_summary, aes(x=mean, y=observed)) +
 ################################################################################
 # Plot performance values
 performance <- fread("data/PLSR_performance.csv")
-performance <- results_model$performance
 performance$RMSE <- performance$RMSE*10000
-mean_value <- median(performance$RMSE, 0.5)
+mean_value <- mean(performance$RMSE)
 
 # Plot
 performance_plot <- ggplot(performance, aes(x = RMSE)) +
   geom_histogram(bins = 30, color="gray", fill = "#659ca2ff", alpha = 0.75) +
+  scale_x_continuous(expand = c(0, 0.0), n.breaks = 4) +
   scale_y_continuous(limits = c(0, 1000), expand = c(0, 0.5), n.breaks = 4) +   
   xlab(expression(paste("RMSE (x10"^-4, " CF year"^-1, ")", sep = ""))) + 
   geom_vline(xintercept = mean_value, linetype= "dashed") +
@@ -153,9 +152,9 @@ performance_plot <- ggplot(performance, aes(x = RMSE)) +
 
 ###Arrange plot-----------------------------------------------------------------
 main <- ggarrange(press_plot,
-                  vip_plot,
                   predicted_plot,
                   performance_plot,
+                  vip_plot,
                   nrow = 2,
                   ncol = 2,
                   labels = c("a", "b", "c", "d"), 
@@ -163,7 +162,7 @@ main <- ggarrange(press_plot,
                   widths = c(3, 3), heights = c(3, 3))
 
 ###Export-----------------------------------------------------------------------
-tiff("Figure_3.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
+tiff("Figure_4.tiff", width = 183, height = 150, units = "mm", pointsize = 12, res = 600)
 
 main
 
