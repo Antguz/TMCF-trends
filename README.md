@@ -39,7 +39,7 @@ instructions described there for proper citation of the data.
   month        = abr,
   year         = 2023,
   publisher    = {Zenodo},
-  version      = {v0.2},
+  version      = {v0.3},
   doi          = {10.5281/zenodo.6476817},
   url          = {https://doi.org/10.5281/zenodo.6476817}
 }
@@ -51,12 +51,12 @@ instructions described there for proper citation of the data.
 ```
 @article{cloud_manuscript,
   author       = {Guzmán, J.A., Hamann, H. F., and Sánchez-Azofeifa, G.A.},
-  title        = {Multi-decadal trends of low clouds at the Tropical Montane Cloud Forests},
-  journal      = {pending},
-  year         = {pending},
-  volume       = {pending},
-  pages        = {pending}
-  doi          = {pending}
+  title        = {Multi-decadal trends of low-clouds at the Tropical Montane Cloud Forests},
+  journal      = {Ecological Indicators},
+  year         = {2024},
+  volume       = {158},
+  pages        = {111599}
+  doi          = {https://doi.org/10.1016/j.ecolind.2024.111599}
 }
 
 ```
